@@ -1,0 +1,13 @@
+argparse
+paramiko
+scp
+
+# Lint
+flake8
+
+# Test
+pytest
+pytest-html
+
+# Docs
+Sphinx
