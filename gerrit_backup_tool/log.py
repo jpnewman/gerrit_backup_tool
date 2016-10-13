@@ -37,7 +37,7 @@ def printout(text, color=WHITE):
 def colorText(text, color=WHITE):
     """Color Text."""
     if has_colors:
-        return "\x1b[1;%dm" % (30 + color) + text + "\x1b[0m"
+        return "\x1b[1;%dm" % (30 + color) + str(text) + "\x1b[0m"
 
     return text
 
