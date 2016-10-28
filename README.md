@@ -7,6 +7,22 @@ This is a backup tool like [duplicity](http://duplicity.nongnu.org/) but custom 
 - Stopping / Starting Jenkins jobs.
 - Run MySQL commands, like dump.
 
+## Install build requirements
+
+> Ubuntu
+
+~~~bash
+sudo apt-get install -y build-essential libssl-dev libffi-dev python-dev
+~~~
+
+> Mac OS X (Xcode needed)
+
+~~~bash
+xcode-select --install
+
+brew install python openssl libffi
+~~~
+
 ## Install python requirements
 
 ~~~bash
