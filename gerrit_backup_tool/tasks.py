@@ -71,6 +71,9 @@ def run_tasks(config, is_remote, taskPrefix, dry_run=False, verbose=False):
             if not dry_run:
                 _sleep(config, section)
                 jenkins = Jenkins(jenkinsUrl)
+                jenkins.verbose = verbose
+                jenkins.dry_run = dry_run
+
                 jenkins_job_status = jenkins.disable_job_and_wait(jobName)
                 if jenkins_job_status != 0:
                     raise RuntimeError("ERROR: Disabling Jenkins Job: %d" % jenkins_job_status)

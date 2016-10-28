@@ -5,6 +5,7 @@ import json
 import time
 import urllib
 import urllib2
+import httplib
 
 import log
 
@@ -19,13 +20,29 @@ class Jenkins(object):
         super(Jenkins, self).__init__()
         self.jenkins_url = jenkins_url.rstrip('/')
 
+        self.verbose = False
+        self.dry_run = False
+
     def job_task(self, jobName, task='enable'):
         """Job Task (enable / disable)."""
         jobUrl = '/'.join([self.jenkins_url, 'job', jobName, task])
-        # print jobUrl
+
+        if self.verbose:
+            log.verbose(jobUrl)
 
         data = urllib.urlencode({})
-        urllib2.urlopen(jobUrl, data)
+
+        try:
+            urllib2.urlopen(jobUrl, data)
+        except urllib2.HTTPError as err:
+            raise RuntimeError("ERROR: (Jenkins) HTTPError = %s (%s)" % (str(err.code), err.reason))
+        except urllib2.URLError as err:
+            raise RuntimeError("ERROR: (Jenkins) URLError = %s (%s)" % (str(err.reason), err.reason))
+        except httplib.HTTPException as err:
+            raise RuntimeError("ERROR: (Jenkins) HTTPException = %s" % str(err.reason))
+        except Exception:
+            import traceback
+            raise RuntimeError('ERROR: (Jenkins) ' + traceback.format_exc())
 
     def disable_job(self, jobName):
         """Disable Job."""
@@ -40,15 +57,27 @@ class Jenkins(object):
     def get_job_info(self, jobName, jobBuild='lastBuild'):
         """Get Jenkins Build Info."""
         jobUrl = '/'.join([self.jenkins_url, 'job', jobName, jobBuild, 'api/json'])
-        # print jobUrl
 
-        jsonData = urllib2.urlopen(jobUrl)
+        if self.verbose:
+            log.verbose(jobUrl)
+
+        try:
+            jsonData = urllib2.urlopen(jobUrl)
+        except urllib2.HTTPError as err:
+            raise RuntimeError("ERROR: (Jenkins) HTTPError = %s (%s)" % (str(err.code), err.reason))
+        except urllib2.URLError as err:
+            raise RuntimeError("ERROR: (Jenkins) URLError = %s (%s)" % (str(err.reason), err.reason))
+        except httplib.HTTPException as err:
+            raise RuntimeError("ERROR: (Jenkins) HTTPException = %s" % str(err.reason))
+        except Exception:
+            import traceback
+            raise RuntimeError('ERROR: (Jenkins) ' + traceback.format_exc())
 
         return json.load(jsonData)
 
     def wait_until_jobs_finished(self, jobName):
         """Wait until the job is finished."""
-        data = self.get_job_info(self.jenkins_url, jobName)
+        data = self.get_job_info(jobName)
         curJobNum = data['number']
         timeStamp = datetime.fromtimestamp(data['timestamp'] / 1e3).replace(microsecond=0)
 
@@ -63,7 +92,7 @@ class Jenkins(object):
                 data['number'], str(duration), estimatedPercentage))
             time.sleep(5)
 
-            data = self.get_job_info(self.jenkins_url, jobName)
+            data = self.get_job_info(jobName)
 
         print(data['result'])
 
@@ -76,5 +105,5 @@ class Jenkins(object):
 
     def disable_job_and_wait(self, jobName):
         """Disable Job and Wait."""
-        self.disable_job(self.jenkins_url, jobName)
-        return self.wait_until_jobs_finished(self.jenkins_url, jobName)
+        self.disable_job(jobName)
+        return self.wait_until_jobs_finished(jobName)

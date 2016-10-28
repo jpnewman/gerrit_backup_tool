@@ -43,17 +43,17 @@ class Api(object):
             response = urllib2.urlopen(api_url, context=context)
 
         except urllib2.HTTPError as err:
-            raise RuntimeError("ERROR: HTTPError = %s (%s)" % (str(err.code), err.reason))
+            raise RuntimeError("ERROR: (Gerrit API) HTTPError = %s (%s)" % (str(err.code), err.reason))
         except urllib2.URLError as err:
-            raise RuntimeError("ERROR: URLError = %s (%s)" % (str(err.reason), err.reason))
+            raise RuntimeError("ERROR: (Gerrit API) URLError = %s (%s)" % (str(err.reason), err.reason))
         except httplib.HTTPException as err:
-            raise RuntimeError("ERROR: HTTPException = %s" % str(err.reason))
+            raise RuntimeError("ERROR: (Gerrit API) HTTPException = %s" % str(err.reason))
         except Exception:
             import traceback
-            raise RuntimeError('ERROR: ' + traceback.format_exc())
+            raise RuntimeError('ERROR: (Gerrit API) ' + traceback.format_exc())
 
         if response.getcode() != 200:
-            raise RuntimeError("ERROR: Did not get 200 response from: %s" % api_url)
+            raise RuntimeError("ERROR: (Gerrit API) Did not get 200 response from: %s" % api_url)
 
         magic_prefix = ")]}'"
         response_body = response.read()

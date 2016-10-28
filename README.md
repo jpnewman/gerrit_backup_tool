@@ -3,6 +3,7 @@
 
 This is a backup tool like [duplicity](http://duplicity.nongnu.org/) but custom build to backup Gerrit servers, with the option for pre- and post- tasks: -
 
+- Stopping / Starting Ubuntu Services.
 - Stopping / Starting Jenkins jobs.
 - Run MySQL commands, like dump.
 
@@ -127,6 +128,64 @@ This following section can be used in the configuration file: -
 |database\_dump_file||gerrit\_mysql_dump.sql|
 
 For an example configuration that works with [jpnewman_ansible_gerrit](https://github.com/jpnewman/jpnewman_ansible_gerrit) look at file ```gerrit_backup.cfg``` within the same folder as this ```README.md```.
+
+## Supported Pre / Post Tasks
+
+### stop\_jenkins_job
+
+~~~
+[post_tasks:start_jenkins_job:gerrit-replicate-git]
+jenkins_url = http://jenkins-server/
+run_remotely = False
+run_for_commands=backup,restore
+~~~
+
+### start\_jenkins_job
+
+~~~
+[pre_tasks:stop_jenkins_job:gerrit-replicate-git]
+jenkins_url = http://jenkins-server/
+run_remotely = False
+run_for_commands=backup,restore
+~~~
+
+### stop\_services
+
+~~~
+[pre_tasks:stop_services]
+services = gerrit,apache2
+run_remotely = True
+run_for_commands=backup,restore
+~~~
+
+### start\_services
+
+~~~
+[post_tasks:start_services]
+services = gerrit,apache2
+run_remotely = True
+run_for_commands=backup,restore
+~~~
+
+### command
+
+~~~
+[pre_tasks:command:gerrit_reindex]
+command = java -jar ./bin/gerrit.war reindex
+pwd = /var/gerrit/review
+run_remotely = True
+run_for_commands=backup
+sleep = 5
+~~~
+
+### database\_command
+
+~~~
+[pre_tasks:database_command:read_only_mode]
+command = FLUSH TABLES WITH READ LOCK; SET GLOBAL read_only = ON;
+run_remotely = True
+run_for_commands=backup
+~~~
 
 ## Run
 
