@@ -96,13 +96,14 @@ def verbose(msg, print_date=True, print_hostname=True):
     print_color_prefix("VERBOSE: ", YELLOW, msg, print_date, print_hostname)
 
 
-def debug(debug_object, print_date=True, print_hostname=True):
+def debug(debug_object, print_date=True, print_hostname=True, print_data_type=True):
     """Print Debug Level."""
     if type(debug_object).__name__ == 'str':
         print_color_prefix("DEBUG: ", MAGENTA, debug_object, print_date, print_hostname)
     else:
         print_color_prefix("DEBUG: -", MAGENTA, '', print_date, print_hostname)
-        print_color(type(debug_object).__name__)
+        if print_data_type:
+            print_color(type(debug_object).__name__)
         print(debug_object)
 
 

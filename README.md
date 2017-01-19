@@ -209,6 +209,7 @@ run_for_commands=backup
 
 ~~~
 python gerrit_backup_tool gerrit_backup.cfg --get-repo-list
+
 python gerrit_backup_tool `PWD`/gerrit_backup.cfg --get-repo-list
 ~~~
 
