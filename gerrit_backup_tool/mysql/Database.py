@@ -66,6 +66,8 @@ class Database(object):
               + " --password=%s" % self.password \
               + " --opt" \
               + " --quote-names" \
+              + " --single-transaction" \
+              + " --quick" \
               + " --databases %s" % ' '.join(databases_names) \
               + " > %s" % database_dump_file
 

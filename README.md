@@ -251,6 +251,12 @@ python gerrit_backup_tool gerrit_backup.cfg --post-tasks-only --repo-list gerrit
 python gerrit_backup_tool gerrit_backup.cfg --backup --dry-run --verbose 2>&1 | tee gerrit_backup_dry_run.log
 ~~~
 
+> To view only ```INFO``` messages / progress you can tail the log and grep for ```INFO:```: -
+
+~~~
+tail -f gerrit_backup_dry_run.log | grep 'INFO:'
+~~~
+
 ## Load previously generated repo list, dry-run
 
 ~~~
@@ -260,8 +266,11 @@ python gerrit_backup_tool gerrit_backup.cfg --backup --repo-list gerrit_backup_r
 ## Dry-Run python script on target box
 
 ~~~
+cd gerrit_backup_tool
+
 python gerrit_backup.py gerrit_backup.cfg --diskusage --dry-run
 
+python gerrit_backup.py gerrit_backup.cfg --backup-database --dry-run
 python gerrit_backup.py gerrit_backup.cfg --backup-repos --dry-run
 ~~~
 
