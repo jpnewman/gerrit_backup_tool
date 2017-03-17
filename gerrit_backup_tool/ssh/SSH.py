@@ -9,6 +9,8 @@ import log
 import paramiko
 import fnmatch
 
+from  binascii import hexlify
+
 
 class SSH(object):
     """SSH Connection."""
@@ -53,12 +55,17 @@ class SSH(object):
         if self.ssh_client is not None:
             return self.ssh_client
 
-        key = None
+        keys = []
         if self._key_file_path:
-            key = paramiko.RSAKey.from_private_key_file(self._key_file_path)
+            keys.append(paramiko.RSAKey.from_private_key_file(self._key_file_path))
+        else:
+            agent = paramiko.Agent()
+            keys = agent.get_keys()
+
+            if not keys:
+                raise paramiko.AuthenticationException("ERROR: No SSH Agent keys found!")
 
         client = paramiko.SSHClient()
-
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         if self.verbose:
@@ -71,16 +78,23 @@ class SSH(object):
                                                self.username,
                                                self.hostname))
 
-        try:
-            client.connect(hostname=self.hostname,
-                           username=self.username,
-                           port=self.port,
-                           pkey=key,
-                           timeout=self.timeout)
-        except paramiko.AuthenticationException:
-            raise RuntimeError("ERROR: SSH Authentication Error!")
+        saved_exception = paramiko.AuthenticationException("ERROR: SSH Authentication Error!")
+        for key in keys:
+            if isinstance(key, paramiko.AgentKey):
+                fp = hexlify(key.get_fingerprint())
+                log.info("Trying SSH Agent key: {0}".format(fp))
+            try:
+                client.connect(hostname=self.hostname,
+                               username=self.username,
+                               port=self.port,
+                               pkey=key,
+                               timeout=self.timeout)
 
-        return client
+                return client
+            except paramiko.SSHException, e:
+                saved_exception = e
+
+        raise saved_exception
 
     def close_client(self):
         """Close SSH Client."""
