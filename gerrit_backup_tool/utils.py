@@ -10,7 +10,8 @@ def load_config(config_file_path):
     if not os.path.exists(config_file_path):
         raise RuntimeError("ERROR: File not found: %s" % config_file_path)
 
-    config = ConfigParser.RawConfigParser()
+    defaults = { 'ssh_key_file': None }
+    config = ConfigParser.RawConfigParser(defaults = defaults)
     config.read(config_file_path)
 
     return config

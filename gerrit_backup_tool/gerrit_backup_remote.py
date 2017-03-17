@@ -65,7 +65,11 @@ def process(config, args):
 
         ssh = SSH(config.get(config_key, 'ssh_hostname'),
                   config.get(config_key, 'ssh_username'))
-        ssh.key_file_path = config.get(config_key, 'ssh_key_file')
+
+        ssh_key_file = config.get(config_key, 'ssh_key_file')
+        if ssh_key_file:
+            ssh.key_file_path = ssh_key_file
+
         ssh.port = config.getint(config_key, 'ssh_port')
         ssh.use_screen = args.use_screen
         ssh.verbose = args.verbose

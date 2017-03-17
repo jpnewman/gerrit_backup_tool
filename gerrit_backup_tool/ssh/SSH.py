@@ -17,7 +17,7 @@ class SSH(object):
         """Init."""
         super(SSH, self).__init__()
         self.port = 22
-        self._key_file_path = ''
+        self._key_file_path = None
 
         self.hostname = hostname
         self.username = username
@@ -53,22 +53,32 @@ class SSH(object):
         if self.ssh_client is not None:
             return self.ssh_client
 
-        key = paramiko.RSAKey.from_private_key_file(self._key_file_path)
+        key = None
+        if self._key_file_path:
+            key = paramiko.RSAKey.from_private_key_file(self._key_file_path)
+
         client = paramiko.SSHClient()
 
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
         if self.verbose:
-            log.verbose("ssh -i %s -p %d %s@%s" % (self._key_file_path,
-                                                   self.port,
-                                                   self.username,
-                                                   self.hostname))
+            key_file_path = ''
+            if self._key_file_path:
+                key_file_path = " -i %s" % (self._key_file_path)
 
-        client.connect(hostname=self.hostname,
-                       username=self.username,
-                       port=self.port,
-                       pkey=key,
-                       timeout=self.timeout)
+            log.verbose("ssh%s -p %d %s@%s" % (key_file_path,
+                                               self.port,
+                                               self.username,
+                                               self.hostname))
+
+        try:
+            client.connect(hostname=self.hostname,
+                           username=self.username,
+                           port=self.port,
+                           pkey=key,
+                           timeout=self.timeout)
+        except paramiko.AuthenticationException:
+            raise RuntimeError("ERROR: SSH Authentication Error!")
 
         return client
 

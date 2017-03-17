@@ -73,81 +73,89 @@ This following section can be used in the configuration file: -
 
 |Section/Values|Description|Example Value|
 |---|---|---|
-|**gerrit**|||
-|gerrit_path||/var/gerrit/review/|
-|gerrit_username||gerrit|
-|gerrit_group||gerrit|
-|**backup**|||
-|ssh_username||vagrant|
-|ssh\_key_file||~/.vagrant.d/insecure\_private_key|
-|ssh_hostname||gerrit-server|
-|ssh_port||22|
-|**backup_api**|||
-|api_url||http://gerrit-server|
-|api\_verify_ssl||False|
-|**restore**|||
-|ssh_username||vagrant|
-|ssh\_key_file||~/.vagrant.d/insecure\_private_key|
-|ssh_hostname||gerrit-server|
-|ssh_port||22|
-|**pre\_tasks:stop_services**|||
-|services||gerrit,apache2|
-|run_remotely||True|
-|run\_for_commands||backup,restore|
-|**pre\_tasks:command:gerrit_reindex**|||
-|command||java -jar ./bin/gerrit.war reindex|
-|pwd||/var/gerrit/review|
-|run_remotely||True|
-|run\_for_commands||backup|
-|sleep||5|
-|**pre\_tasks:database\_command:read\_only_mode**|||
-|command||FLUSH TABLES WITH READ LOCK; SET GLOBAL read_only||ON;|
-|run_remotely||True|
-|run\_for_commands||backup|
-|**pre\_tasks:database\_command:read\_only\_mode_check**|||
-|command||SELECT @@global.read_only;|
-|run_remotely||True|
-|run\_for_commands||backup|
-|**post\_tasks:database\_command:read\_only_mode**|||
-|command||SET GLOBAL read_only||OFF; UNLOCK TABLES;|
-|run_remotely||True|
-|run\_for_commands||backup,restore|
-|**post\_tasks:database\_command:read\_only\_mode_check**|||
-|command||SELECT @@global.read_only;|
-|run_remotely||True|
-|run\_for_commands||backup,restore|
-|**post\_tasks:command:gerrit_reindex**|||
-|command||java -jar ./bin/gerrit.war reindex|
-|pwd||/var/gerrit/review|
-|run_remotely||True|
-|run\_for_commands||restore|
-|sleep||25|
-|**post\_tasks:start_services**|||
-|services||gerrit,apache2|
-|run_remotely||True|
-|run\_for_commands||backup,restore|
-|sleep||5|
-|**backup_structure**|||
-|database_folder||database|
-|repos_folder||repos|
-|repos\_list_folder||repos_list|
-|**backup_folder**|||
-|backup_folder||/vagrant/gerrit_backup|
-|**script**|||
-|repo\_list_filename||gerrit\_backup_repos.txt|
-|script\_python_filename||gerrit_backup.py|
-|**database**|||
-|database_host||localhost|
-|database_username||gerrit|
-|database_password||gerrit|
-|databases_name||gerrit|
-|database\_dump_file||gerrit\_mysql_dump.sql|
+|**```[gerrit]```**|||
+|```gerrit_path```||```/var/gerrit/review/```|
+|```gerrit_username```||gerrit|
+|```gerrit_group```||gerrit|
+|**```[backup]```**|||
+|```ssh_username```||vagrant|
+|```ssh_key_file```||```~/.vagrant.d/insecure_private_key```|
+|```ssh_hostname```||gerrit-server|
+|```ssh_port```||22|
+|**```[backup_api]```**|||
+|```api_url```||http://gerrit-server|
+|```api_verify_ssl```||False|
+|**```[restore]```**|||
+|```ssh_username```||vagrant|
+|```ssh_key_file```||```~/.vagrant.d/insecure_private_key```|
+|```ssh_hostname```||gerrit-server|
+|```ssh_port```||22|
+|**```[pre_tasks:stop_services]```**|||
+|```services```||gerrit,apache2|
+|```run_remotely```||True|
+|```run_for_commands```||backup,restore|
+|**```[pre_tasks:command:gerrit_reindex]```**|||
+|```command```||```java -jar ./bin/gerrit.war reindex```|
+|```pwd```||```/var/gerrit/review```|
+|```run_remotely```||True|
+|```run_for_commands```||backup|
+|```sleep```||5|
+|**```[pre_tasks:database_command:read_only_mode]```**|||
+|```command```||```FLUSH TABLES WITH READ LOCK; SET GLOBAL read_only||ON;```|
+|```run_remotely```||True|
+|```run_for_commands```||backup|
+|**```[pre_tasks:database_command:read_only_mode_check]```**|||
+|```command```||```SELECT @@global.read_only;```|
+|```run_remotely```||True|
+|```run_for_commands```||backup|
+|**```[post_tasks:database_command:read_only_mode]```**|||
+|```command```||```SET GLOBAL read_only||OFF; UNLOCK TABLES;```|
+|```run_remotely```||True|
+|```run_for_commands```||backup,restore|
+|**```[post_tasks:database_command:read_only_mode_check]```**|||
+|```command```||```SELECT @@global.read_only;```|
+|```run_remotely```||True|
+|```run_for_commands```||backup,restore|
+|**```[post_tasks:command:gerrit_reindex]```**|||
+|```command```||```java -jar ./bin/gerrit.war reindex```|
+|```pwd```||```/var/gerrit/review```|
+|```run_remotely```||True|
+|```run_for_commands```||restore|
+|```sleep```||25|
+|**```[post_tasks:start_services]```**|||
+|```services```||gerrit,apache2|
+|```run_remotely```||True|
+|```run_for_commands```||backup,restore|
+|```sleep```||5|
+|**```[backup_structure]```**|||
+|```database_folder```||database|
+|```repos_folder```||repos|
+|```repos_list_folder```||```repos_list```|
+|**```[backup_folder]```**|||
+|```backup_folder```||```/vagrant/gerrit_backup```|
+|**```[script]```**|||
+|```repo_list_filename```||```gerrit_backup_repos.txt```|
+|```script_python_filename```||```gerrit_backup.py```|
+|**```[database]```**|||
+|```database_host```||localhost|
+|```database_username```||gerrit|
+|```database_password```||gerrit|
+|```databases_name```||gerrit|
+|```database_dump_file```||```gerrit_mysql_dump.sql```|
 
-For an example configuration that works with [jpnewman_ansible_gerrit](https://github.com/jpnewman/jpnewman_ansible_gerrit) look at file ```gerrit_backup.cfg``` within the same folder as this ```README.md```.
+For an example configuration that works with [jpnewman\_ansible_gerrit](https://github.com/jpnewman/jpnewman_ansible_gerrit) look at file ```gerrit_backup.cfg``` within the same folder as this ```README.md```.
+
+**NOTES: -**
+
+- If ```ssh_key_file``` is not define the key should be added to ```ssh-agent```: -
+
+~~~
+ssh-add ~/.vagrant.d/insecure_private_key
+~~~
 
 ## Supported Pre / Post Tasks
 
-### stop\_jenkins_job
+### ```stop_jenkins_job```
 
 ~~~
 [post_tasks:start_jenkins_job:gerrit-replicate-git]
@@ -156,7 +164,7 @@ run_remotely = False
 run_for_commands=backup,restore
 ~~~
 
-### start\_jenkins_job
+### ```start_jenkins_job```
 
 ~~~
 [pre_tasks:stop_jenkins_job:gerrit-replicate-git]
@@ -165,7 +173,7 @@ run_remotely = False
 run_for_commands=backup,restore
 ~~~
 
-### stop\_services
+### ```stop_services```
 
 ~~~
 [pre_tasks:stop_services]
@@ -174,7 +182,7 @@ run_remotely = True
 run_for_commands=backup,restore
 ~~~
 
-### start\_services
+### ```start_services```
 
 ~~~
 [post_tasks:start_services]
@@ -183,7 +191,7 @@ run_remotely = True
 run_for_commands=backup,restore
 ~~~
 
-### command
+### ```command```
 
 ~~~
 [pre_tasks:command:gerrit_reindex]
@@ -194,7 +202,7 @@ run_for_commands=backup
 sleep = 5
 ~~~
 
-### database\_command
+### ```database_command```
 
 ~~~
 [pre_tasks:database_command:read_only_mode]
